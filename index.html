@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Trip Planner</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+      <span class="logo-icon">✈️</span>
+      <span class="logo-text">WanderPlan</span>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#planner" class="nav-link">Plan Trip</a>
+      <a href="#explore" class="nav-link">Explore</a>
+      <a href="#inspired" class="nav-link">Get Inspired</a>
+      <a href="https://www.google.com/travel/flights" target="_blank" class="nav-link external-link">Flights ↗</a>
+      <a href="https://www.booking.com" target="_blank" class="nav-link external-link">Stays ↗</a>
+      <a href="#resources" class="nav-link">Resources</a>
+      <a href="#help" class="nav-link">Help</a>
+    </nav>
+
+    <button class="menu-btn" id="menuToggle" aria-label="Open Trips Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+      <h3>Saved Itineraries</h3>
+      <button class="close-btn" id="closeDrawer">×</button>
+    </div>
+
+    <div class="drawer-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <h4 style="margin:0;">📌 My Saved Trips</h4>
+        <button id="clearTripsBtn" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer; font-weight:600;">Clear All</button>
+      </div>
+      <div id="savedTripsList" class="trip-list">
+        </div>
+    </div>
+  </aside>
+
+  <main class="container">
+    <section class="hero-section">
+      <h1>Discover & Plan Your India Trip</h1>
+      <p>Set your destination, preferences, and budget to generate a custom day-by-day plan instantly.</p>
+    </section>
+
+    <div class="grid-layout">
+      <section class="card form-card" id="planner">
+        <h2>Trip Parameters</h2>
+        <form id="tripForm">
+          <div class="form-group">
+            <label for="destination">Select Destination</label>
+            <select id="destination" name="destination" required>
+              <option value="" disabled selected>-- Choose a Destination in India --</option>
+              <option value="Goa">Goa (Beaches & Nightlife)</option>
+              <option value="Manali">Manali (Snow & Mountains)</option>
+              <option value="Jaipur">Jaipur (Forts & Royal Palaces)</option>
+              <option value="Kerala">Kerala (Backwaters & Houseboats)</option>
+              <option value="Varanasi">Varanasi (Ghats & Spiritual Heritage)</option>
+              <option value="Agra">Agra (Taj Mahal & Mughal Architecture)</option>
+              <option value="Ladakh">Ladakh (High Passes & Monasteries)</option>
+              <option value="Udaipur">Udaipur (City of Lakes)</option>
+              <option value="Rishikesh">Rishikesh (Yoga & River Rafting)</option>
+              <option value="Darjeeling">Darjeeling (Tea Gardens & Kanchenjunga)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="duration">Duration (Days)</label>
+              <input type="number" id="duration" name="duration" min="1" max="14" value="3" required />
+            </div>
+
+            <div class="form-group">
+              <label for="budget">Total Budget (₹)</label>
+              <input type="number" id="budget" name="budget" placeholder="15000" min="500" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="tripType">Travel Style</label>
+            <select id="tripType" name="tripType">
+              <option value="balanced">Balanced Sightseeing</option>
+              <option value="adventure">Adventure & Outdoor</option>
+              <option value="relaxed">Relaxed & Leisure</option>
+              <option value="culture">Culture & History</option>
+              <option value="foodie">Culinary Exploration</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="travelGuide">Assigned Travel Guide</label>
+            <select id="travelGuide" name="travelGuide" required>
+              <option value="" disabled selected>-- Select a Certified Guide --</option>
+              <option value="SHAIK WAZID">SHAIK WAZID</option>
+              <option value="MOHAMMAD SAAD">MOHAMMAD SAAD</option>
+              <option value="SHAIK ABID">SHAIK ABID</option>
+              <option value="SHAIK RIYAZ">SHAIK RIYAZ</option>
+              <option value="SAI NAGARJUNA">SAI NAGARJUNA</option>
+            </select>
+          </div>
+
+          <button type="submit" id="generateBtn" class="btn-primary">Generate Itinerary</button>
+        </form>
+      </section>
+
+      <section class="card itinerary-card" id="itinerary">
+        <div class="card-header">
+          <h2>Your Itinerary</h2>
+          <span class="badge" id="statusBadge">Ready to Plan</span>
+        </div>
+
+        <div id="itineraryContent" class="itinerary-content">
+          <div class="empty-state">
+            <p>Select an Indian destination, guide, and click <strong>Generate Itinerary</strong> to view your schedule here.</p>
+          </div>
+        </div>
+
+        <div id="tripActionButtons" class="action-buttons-container hidden">
+          <button id="saveTripBtn" class="btn-save-full">💾 Save This Trip</button>
+        </div>
+
+        <div class="summary-box" id="summaryBox">
+          <h3>Estimated Breakdown</h3>
+          <div class="summary-row">
+            <span>Accommodation:</span>
+            <strong id="stayCost">₹0</strong>
+          </div>
+          <div class="summary-row">
+            <span>Activities & Food:</span>
+            <strong id="activityCost">₹0</strong>
+          </div>
+          <div class="summary-row">
+            <span>Local Transport:</span>
+            <strong id="transportCost">₹0</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="content-section" id="explore">
+      <div class="section-title">
+        <h2>Top 10 Indian Destinations</h2>
+        <p>Explore prominent travel spots across India and load them directly into your planner.</p>
+      </div>
+      <div class="destinations-grid" id="destinationsList"></div>
+    </section>
+
+    <section class="content-section" id="inspired">
+      <div class="section-title">
+        <h2>Get Inspired</h2>
+        <p>Curated travel themes for every kind of traveler.</p>
+      </div>
+      <div class="inspiration-grid">
+        <div class="card inspiration-card">
+          <img src="https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=600&q=80" alt="Spiritual India" class="card-img" />
+          <h3>Spiritual Journeys</h3>
+          <p>Find inner peace along the sacred Ganges in Varanasi and Rishikesh, attending the evening Ganga Aarti.</p>
+        </div>
+        <div class="card inspiration-card">
+          <img src="https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=600&q=80" alt="Himalayan Treks" class="card-img" />
+          <h3>Himalayan Treks & Snow</h3>
+          <p>Conquer mountain passes in Ladakh or enjoy the snowy slopes and apple orchards of Manali.</p>
+        </div>
+        <div class="card inspiration-card">
+          <img src="https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=600&q=80" alt="Royal Heritage" class="card-img" />
+          <h3>Royal Forts & Palaces</h3>
+          <p>Immerse yourself in regal grandeur across Jaipur's Amer Fort and Udaipur's serene Lake Pichola.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="resources">
+      <div class="section-title">
+        <h2>Traveler Resources</h2>
+        <p>Key information to ensure smooth and safe travels across India.</p>
+      </div>
+      <div class="resources-grid">
+        <div class="card resource-card">
+          <h4>🧳 Packing Essentials</h4>
+          <p>Light breathable cottons for coastal regions; warm layered woolens for northern hill stations.</p>
+        </div>
+        <div class="card resource-card">
+          <h4>🚆 Transit & Rail</h4>
+          <p>Use IRCTC for intercity train bookings and pre-paid airport/station taxis to avoid surge pricing.</p>
+        </div>
+        <div class="card resource-card">
+          <h4>💳 Payments & UPI</h4>
+          <p>Digital payments (UPI) work across nearly all vendors, but keep ₹1,000–₹2,000 emergency cash handy.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="help">
+      <div class="section-title">
+        <h2>Help & Support</h2>
+        <p>Need assistance with your travel plan? Reach out directly to our 24/7 support desk.</p>
+      </div>
+
+      <div class="card help-single-card">
+        <h3>Contact Assistance Desk</h3>
+        <p>Our travel team is available round the clock for booking guidance, itinerary adjustments, and emergency travel support.</p>
+        
+        <div class="contact-details-grid">
+          <div class="contact-box">
+            <span class="contact-icon">📞</span>
+            <div>
+              <strong>Phone Helpline</strong>
+              <p>+91 98765 43210</p>
+              <p>+91 (080) 2345 6789</p>
+            </div>
+          </div>
+
+          <div class="contact-box">
+            <span class="contact-icon">📧</span>
+            <div>
+              <strong>Email Support</strong>
+              <p>support@wanderplan.in</p>
+              <p>helpdesk@wanderplan.in</p>
+            </div>
+          </div>
+
+          <div class="contact-box">
+            <span class="contact-icon">📍</span>
+            <div>
+              <strong>Headquarters</strong>
+              <p>4th Floor, Tech Park, Indiranagar</p>
+              <p>Bengaluru, Karnataka, India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast hidden">Trip generated successfully!</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
